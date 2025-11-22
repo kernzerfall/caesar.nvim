@@ -15,7 +15,7 @@ Just drop `caesar.lua` in your `.config/nvim/lua/plugins` directory.
 
 Because I can
 
-### Why don't you used VSCode like a normal person?
+### Why don't you use VSCode like a normal person?
 
 See [here](https://www.youtube.com/watch?v=rrAgnnRZMMk).
 
