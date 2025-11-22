@@ -168,7 +168,21 @@ local function setup_explanations()
 	end
 end
 
-local function setup_parser()
+function M.parser_default_config()
+	return {
+		install_info = {
+			url = "https://github.com/kernzerfall/tree-sitter-heyvl",
+			files = { "src/parser.c" },
+			queries = "queries/",
+			revision = "619fa849941274be1b0c37613935622b36f6754e",
+		},
+		tier = 2, -- tier: unstable
+		maintainers = { "@kernzerfall" },
+		filetype = "heyvl",
+	}
+end
+
+function M.register_parser()
 	-- register the language with treesitter
 	vim.treesitter.language.register("heyvl", "heyvl")
 
@@ -178,34 +192,12 @@ local function setup_parser()
 	vim.api.nvim_create_autocmd("User", {
 		pattern = "TSUpdate",
 		callback = function()
-			require("nvim-treesitter.parsers").heyvl = {
-				install_info = {
-					url = "https://github.com/kernzerfall/tree-sitter-heyvl",
-					files = { "src/parser.c" },
-					queries = "queries/",
-					revision = "619fa849941274be1b0c37613935622b36f6754e",
-				},
-				tier = 2, -- tier: unstable
-				maintainers = { "@kernzerfall" },
-				filetype = "heyvl",
-			}
+			require("nvim-treesitter.parsers").heyvl = M.parser_default_config()
 		end,
 	})
 end
 
 function M.setup(_)
-	local configs = require("lspconfig.configs")
-
-	if not configs.caesar then
-		configs.caesar = {
-			default_config = {
-				cmd = { "caesar", "lsp", "--language-server", "--explain-vc" },
-				filetypes = { "heyvl" },
-			},
-		}
-	end
-
-	setup_parser()
 	setup_explanations()
 	setup_verify()
 
@@ -216,8 +208,6 @@ function M.setup(_)
 			vim.cmd("CaesarVerify")
 		end,
 	})
-
-	return {}
 end
 
 return M
