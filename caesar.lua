@@ -97,7 +97,8 @@ local function setup_explanations()
       local padding = string.rep(" ", col)
       local virt_lines = {}
 
-      for _, expl in ipairs(explanations) do
+      for i = #explanations, 1, -1 do
+        local expl = explanations[i]
         local raw_text = expl[1]
         local available_width = content_width - col - 2
 
@@ -114,7 +115,7 @@ local function setup_explanations()
       if #virt_lines > 0 then
         vim.api.nvim_buf_set_extmark(bufnr, ns_id, cursor_line, 0, {
           virt_lines = virt_lines,
-          virt_lines_above = false,
+          virt_lines_above = true,
         })
       end
     end
