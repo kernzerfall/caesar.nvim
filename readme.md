@@ -5,9 +5,13 @@ A `nvim-lspconfig` and `nvim-treesitter` config for the [Caesar Verifier](https:
 - The LSP functionality was ported from the upstream VSCode extension.
 - The treesitter grammar can be found at [kernzerfall/tree-sitter-heyvl](https://github.com/kernzerfall/tree-sitter-heyvl). This was ported from the upstream LALRPOP parser.
 
+## Installation
+
+Just drop `caesar.lua` in your `.config/nvim/lua/plugins` directory.
+
 ## Frequently Asked Questions
 
-### Why do you do this?
+### Why did you make this?
 
 Because I can
 
