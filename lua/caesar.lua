@@ -176,7 +176,7 @@ function M.parser_default_config()
 			url = "https://github.com/kernzerfall/tree-sitter-heyvl",
 			files = { "src/parser.c" },
 			queries = "queries/",
-			revision = "619fa849941274be1b0c37613935622b36f6754e",
+			branch = "master",
 		},
 		tier = 2, -- tier: unstable
 		maintainers = { "@kernzerfall" },
