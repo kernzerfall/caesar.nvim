@@ -136,7 +136,7 @@ local function setup_explanations()
 		end,
 	})
 
-	-- LSP Handler (Stores data instead of rendering directly)
+	-- LSP Handler for computedPre (Stores data instead of rendering directly)
 	vim.lsp.handlers["custom/computedPre"] = function(err, result, ctx, _)
 		if err then
 			return
@@ -167,6 +167,73 @@ local function setup_explanations()
 
 		-- Trigger an immediate render for the current line (in case we are already on one)
 		render_cursor_line_explanations(bufnr)
+	end
+end
+
+-- LSP Handler for documentStatus
+local function setup_document_status()
+	local ns_status = vim.api.nvim_create_namespace("caesar_status")
+
+	-- You can customize these colors or link them to standard groups
+	vim.api.nvim_set_hl(0, "CaesarStatusVerified", { link = "DiagnosticOk", default = true })
+	vim.api.nvim_set_hl(0, "CaesarStatusFailed", { link = "DiagnosticError", default = true })
+	vim.api.nvim_set_hl(0, "CaesarStatusUnknown", { link = "DiagnosticWarn", default = true })
+	vim.api.nvim_set_hl(0, "CaesarStatusTimeout", { link = "DiagnosticInfo", default = true })
+	vim.api.nvim_set_hl(0, "CaesarStatusOngoing", { link = "Comment", default = true })
+	vim.api.nvim_set_hl(0, "CaesarStatusTodo", { link = "Comment", default = true })
+
+	-- Mapping from Caesar status strings to Icons & Highlights
+	local status_map = {
+		verified = { icon = "✔", hl = "CaesarStatusVerified" },
+		failed = { icon = "✖", hl = "CaesarStatusFailed" },
+		unknown = { icon = "?", hl = "CaesarStatusUnknown" },
+		timeout = { icon = "⏱", hl = "CaesarStatusTimeout" },
+		ongoing = { icon = "…", hl = "CaesarStatusOngoing" },
+		todo = { icon = "·", hl = "CaesarStatusTodo" },
+	}
+
+	vim.lsp.handlers["custom/documentStatus"] = function(err, result, ctx, _)
+		if err then
+			return
+		end
+		if not result or not result.document then
+			return
+		end
+
+		local bufnr = vim.uri_to_bufnr(result.document.uri)
+		if not vim.api.nvim_buf_is_valid(bufnr) then
+			return
+		end
+
+		-- Clear previous status signs
+		vim.api.nvim_buf_clear_namespace(bufnr, ns_status, 0, -1)
+
+		-- The payload contains:
+		-- verify_statuses: List of [Range, StatusString]
+		-- status_counts:   List of [StatusString, Count] (Useful for statusline)
+		-- status_type:     "ongoing" | "done" | ... (Overall document status)
+
+		if result.verify_statuses then
+			for _, item in ipairs(result.verify_statuses) do
+				local range = item[1]
+				local status_str = item[2] -- "verified", "failed", etc.
+				local config = status_map[status_str:lower()]
+
+				if config then
+					local start_line = range.start.line
+					-- Place a sign in the gutter using extmarks
+					vim.api.nvim_buf_set_extmark(bufnr, ns_status, start_line, 0, {
+						sign_text = config.icon,
+						sign_hl_group = config.hl,
+						-- High priority to ensure it sits "on top" of other signs if needed
+						priority = 50,
+					})
+				end
+			end
+		end
+
+		vim.b[bufnr].caesar_status_type = result.status_type
+		vim.b[bufnr].caesar_status_counts = result.status_counts
 	end
 end
 
@@ -217,6 +284,7 @@ end
 function M.setup(opts)
 	setup_explanations()
 	setup_verify()
+	setup_document_status()
 	setup_colours(opts and opts.hl or M.colours_default())
 
 	-- Reverify after writing a buffer
