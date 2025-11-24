@@ -184,7 +184,7 @@ function M.parser_default_config()
 	}
 end
 
-function M.register_parser()
+function M.register_parser(parser_config)
 	-- register the language with treesitter
 	vim.treesitter.language.register("heyvl", "heyvl")
 
@@ -194,7 +194,7 @@ function M.register_parser()
 	vim.api.nvim_create_autocmd("User", {
 		pattern = "TSUpdate",
 		callback = function()
-			require("nvim-treesitter.parsers").heyvl = M.parser_default_config()
+			require("nvim-treesitter.parsers").heyvl = parser_config or M.parser_default_config()
 		end,
 	})
 end
