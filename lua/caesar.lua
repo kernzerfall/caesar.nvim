@@ -296,4 +296,31 @@ function M.setup(opts)
 	})
 end
 
+-- Status output for statuslines (e.g. lualine)
+function M.line_status()
+	local counts = vim.b.caesar_status_counts
+	if not counts or vim.tbl_isempty(counts) then
+		return ""
+	end
+
+	local icons = {
+		verified = "✔",
+		failed = "✖",
+		unknown = "?",
+		timeout = "⏱",
+		ongoing = "…",
+		todo = "·",
+	}
+
+	local parts = {}
+	for _, item in ipairs(counts) do
+		local status = item[1]:lower()
+		local count = item[2]
+		if icons[status] then
+			table.insert(parts, icons[status] .. " " .. count)
+		end
+	end
+	return "Caesar[" .. table.concat(parts, " ") .. "]"
+end
+
 return M
