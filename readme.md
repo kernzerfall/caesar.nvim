@@ -23,11 +23,11 @@ You may need to run `:TSInstall heyvl` to get syntax highlighting.
 - Inline explanations (via `custom/computedPre`). Highly recommended to use [lsp_lines.nvim](https://git.sr.ht/~whynothugo/lsp_lines.nvim).
 - Tree-Sitter config (among others for syntax highlighting).
 - Handles `custom/documentStatus` (✔/✖/... next to proc/coproc/... depending on verification status)
-- Statusline integration of `documentStatus` possible (e.g. with `lualine`, see below).
+- Statusline integration of `documentStatus` possible (e.g. with [lualine](https://github.com/nvim-lualine/lualine.nvim), see below).
 
 ### Statusline integration
 
-For example, using `lazyvim` with `lualine`, you can show the status on the left like this:
+For example, using `lazyvim` with [lualine](https://github.com/nvim-lualine/lualine.nvim), you can show the status on the left like this:
 
 ```lua
 {
