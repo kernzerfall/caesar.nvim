@@ -1,6 +1,6 @@
-# Caesar/HeyVL config for neovim
+#  Caesar/HeyVL integration for neovim 
 
-A (work-in-progress) `nvim-lspconfig` and `nvim-treesitter` config for the [Caesar Verifier](https://github.com/moves-rwth/caesar).
+A (work-in-progress) `nvim-lspconfig` and `nvim-treesitter` integration for the [Caesar Verifier](https://github.com/moves-rwth/caesar).
 
 - The LSP functionality was ported from the upstream [VSCode extension](https://github.com/moves-rwth/caesar/tree/main/vscode-ext).
 - The Tree-Sitter grammar can be found at [kernzerfall/tree-sitter-heyvl](https://github.com/kernzerfall/tree-sitter-heyvl). This was ported from the upstream [LALRPOP parser](https://github.com/moves-rwth/caesar/blob/main/src/front/parser/grammar.lalrpop).
