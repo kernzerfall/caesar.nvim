@@ -18,6 +18,7 @@ You may need to run `:TSInstall heyvl` to get syntax highlighting.
 ## Features
 
 - `CaesarVerify` command to verify the current buffer.
+- `CaesarCounterexample` command to view counterexamples (if available).
 - Reverify after writing (saving) buffers.
 - Inline explanations (via `custom/computedPre`). Highly recommended to use [lsp_lines.nvim](https://git.sr.ht/~whynothugo/lsp_lines.nvim).
 - Tree-Sitter config (among others for syntax highlighting).
