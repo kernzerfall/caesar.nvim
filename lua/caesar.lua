@@ -237,6 +237,63 @@ local function setup_document_status()
 	end
 end
 
+-- detailed counterexample viewer
+local function show_caesar_cex()
+	local line = vim.api.nvim_win_get_cursor(0)[1] - 1
+	local diagnostics = vim.diagnostic.get(0, { lnum = line })
+
+	local caesar_diag = nil
+	for _, d in ipairs(diagnostics) do
+		if d.source == "caesar" then
+			caesar_diag = d
+			break
+		end
+	end
+
+	if not caesar_diag then
+		vim.notify("No Caesar diagnostics found on this line.", vim.log.levels.INFO)
+		return
+	end
+
+	local lines = {}
+
+	-- Caesar sends variable values as "relatedInformation"
+	if caesar_diag.user_data and caesar_diag.user_data.lsp and caesar_diag.user_data.lsp.relatedInformation then
+		for _, info in ipairs(caesar_diag.user_data.lsp.relatedInformation) do
+			-- info.message contains "in the cex, input variable X is Y"
+			local location_str = ""
+			if info.location and info.location.range then
+				local start_line = info.location.range.start.line + 1
+				location_str = string.format(" (line %d)", start_line)
+			end
+
+			table.insert(lines, "• " .. info.message .. location_str)
+		end
+	end
+
+	-- Display in a floating window
+	local buf = vim.api.nvim_create_buf(false, true)
+	vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+	local width = math.min(vim.o.columns - 4, 100)
+	local height = math.min(vim.o.lines - 4, #lines)
+
+	vim.api.nvim_open_win(buf, true, {
+		relative = "cursor",
+		row = 1,
+		col = 0,
+		width = width,
+		height = height,
+		style = "minimal",
+		border = "rounded",
+		title = " Caesar Counterexample ",
+		title_pos = "center",
+	})
+
+	-- 'q' or 'Esc' to close the window
+	vim.keymap.set("n", "q", "<cmd>close<cr>", { buffer = buf })
+	vim.keymap.set("n", "<Esc>", "<cmd>close<cr>", { buffer = buf })
+end
+
 function M.parser_default_config()
 	return {
 		install_info = {
@@ -294,6 +351,11 @@ function M.setup(opts)
 			vim.cmd("CaesarVerify")
 		end,
 	})
+
+	-- Show full counterexample as provided by caesar
+	vim.api.nvim_create_user_command("CaesarCounterexample", function()
+		show_caesar_cex()
+	end, { desc = "Show detailed Caesar counterexample" })
 end
 
 -- Status output for statuslines (e.g. lualine)
