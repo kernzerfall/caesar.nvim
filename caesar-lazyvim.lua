@@ -10,6 +10,7 @@ return {
     opts = {
       servers = {
         caesar = {
+          -- remove `--explain-vc` to turn off explanations (some @tags don't support them!)
           cmd = { "caesar", "lsp", "--language-server", "--explain-vc" },
           filetypes = { "heyvl" },
         },
